@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import re
@@ -62,6 +61,45 @@ def load_dataset(dataset_type: str, force_reload: bool = False) -> pd.DataFrame:
         print("[Info] pyarrow / fastparquet not found – skipping Parquet cache.")
 
     return big
+
+def focus_on_london_burglary(
+    street_df: pd.DataFrame,
+    lsoa_file: Path | None = DATA_DIR / "london_lsoa.txt",
+    bbox_filter: bool = True,
+) -> pd.DataFrame:
+    """Return Street dataframe filtered to London residential burglary only."""
+    # 1) crime type
+    bur = street_df[street_df["Crime type"].str.contains("burglary", case=False)].copy()
+
+    # 2) spatial filter ─────────────
+    # 2a) lat/lon bounding box (fast)
+    if bbox_filter:
+        from london_boundry import LON_MIN, LON_MAX, LAT_MIN, LAT_MAX
+        bur = bur[
+            bur["Longitude"].between(LON_MIN, LON_MAX)
+            & bur["Latitude"].between(LAT_MIN, LAT_MAX)
+        ]
+
+    # 2b) LSOA whitelist (precise)
+    if lsoa_file and Path(lsoa_file).exists():
+        london_lsoas = set(Path(lsoa_file).read_text().splitlines())
+        bur = bur[bur["LSOA code"].isin(london_lsoas)]
+
+    # 3) tidy date
+    bur["month"] = pd.to_datetime(bur["month"]).dt.to_period("M").dt.to_timestamp()
+    return bur
+
+
+def make_unit_month(bur: pd.DataFrame) -> pd.DataFrame:
+    """Aggregate to LSOA × Month count (use when 'Ward' column is missing)."""
+    out = (
+        bur.groupby(["LSOA code", "month"], dropna=False)
+           .size()
+           .rename("burglary_cnt")
+           .reset_index()
+           .rename(columns={"LSOA code": "unit"})   # neutral name
+    )
+    return out
 
 
 def overview(df: pd.DataFrame, name: str):
@@ -143,28 +181,30 @@ else:
 
 
 if __name__ == "__main__":
+    # 0  load raw street table (cached)
     street = load_dataset("street")
-    outcomes = load_dataset("outcomes")
-    searches = load_dataset("stop-and-search")
 
-    overview(street, "Street")
-    overview(outcomes, "Outcomes")
-    overview(searches, "Stop & Search")
+    # 1  keep London residential burglary only
+    bur_lon = focus_on_london_burglary(
+    street_df=street,
+    lsoa_file=Path("london_lsoa.txt"),         # ← new whitelist
+    bbox_filter=True,                          # quick geo guard
+)
+    overview(bur_lon, "London Residential Burglary")
 
-    describe_categoricals(
-        street,
-        cat_cols=["Crime type", "Last outcome category", "LSOA name", "Reported by"],
-    )
-    describe_categoricals(
-        searches,
-        cat_cols=["Legislation", "Outcome", "Object of search", "Gender"],
-    )
+    # 2  aggregate → Ward × Month counts
+    wm = make_unit_month(bur_lon)
+    overview(wm, "Ward-Month table")
 
-    plot_time_series(street, col="Crime type", title="Crime type trends (street)")
-    plot_time_series(searches, col="Outcome", title="Search outcomes (relative)", relative=True)
-
-    # ── New: interactive map of crime locations (street data) ──
-    if _FOLIUM_OK:
-        plot_map(street, outfile="crime_map.html", sample=7000)
+    # 3  tiny sanity visual
+    plot_time_series(
+    wm,
+    col="unit",                       # <- the column created in make_unit_month()
+    title="Burglary totals per LSOA",
+    relative=False,
+)
 
 
+    # 4  (save for modelling later)
+    wm.to_csv(CACHE_DIR / "ward_month_burglary_london.csv", index=False)
+    print("✅  Saved ward-month table →", CACHE_DIR / "ward_month_burglary_london.csv")
