@@ -43,14 +43,16 @@ def map():
     for index, loc in df.iterrows():
         if loc['Type']=='<CrimeCategory> Burglary':
             color = 'red'
+
+            folium.CircleMarker([loc['Latitude'], loc['Longitude']], radius=2, color=color, weight=5, popup=loc['Type']).add_to(my_map)
+
         else:
             color = 'black'
-        folium.CircleMarker([loc['Latitude'], loc['Longitude']], radius=2, color=color, weight=5, popup=loc['Type']).add_to(my_map)
-
-    folium.LayerControl().add_to(my_map) 
+    
+    folium.LayerControl().add_to(my_map)
 
     my_map.save("map.html")
     webbrowser.open("map.html")
 
-get_crime_data('city-of-london', '2025-02')
+get_crime_data('metropolitan', '2025-02')
 map()
