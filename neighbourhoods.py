@@ -16,8 +16,8 @@ def get_london_roads(path_to_uk_road_file: str = 'datasets/uk_road.gpkg'):
     # Convert to GeoDataFrame
     bbox_gdf = gpd.GeoDataFrame({'geometry': [london_bbox]}, crs="EPSG:4326")
 
-    print("Reading road nodes...")
-    road_links = gpd.read_file("datasets/uk_road.gpkg", layer="road_node")
+    print("Reading road links...")
+    road_links = gpd.read_file("datasets/uk_road.gpkg", layer="road_link")
     print("Done reading. Reprojecting...")
 
     road_links = road_links.to_crs("EPSG:4326")
@@ -26,15 +26,14 @@ def get_london_roads(path_to_uk_road_file: str = 'datasets/uk_road.gpkg'):
     london_roads = gpd.clip(road_links, bbox_gdf)
     print("Clipping done.")
 
-    london_roads.to_file("datasets/london_road_nodes_only.gpkg", layer="road_node", driver="GPKG")
-
-
-london_roads = gpd.read_file('datasets/london_road_links_only.gpkg')
+    london_roads.to_file("datasets/london_road_links_only.gpkg", layer="road_node", driver="GPKG")
 
 
 def get_lsoa_geodata(lsoa_folder: str = "datasets/lsoa_boundaries/") -> gpd.GeoDataFrame:
     # Folder where you downloaded all borough LSOA files
     folder_path = lsoa_folder
+
+    print("Getting lsoa geodata...")
 
     # List all files (e.g. all shapefiles or GeoJSONs)
     files = [f for f in os.listdir(folder_path) if f.endswith('.shp')]  # or '.shp'
@@ -42,7 +41,6 @@ def get_lsoa_geodata(lsoa_folder: str = "datasets/lsoa_boundaries/") -> gpd.GeoD
     # Read and concatenate all files
     lsoa_list = []
     for file in files:
-        print(f"Loading {file}...")
         gdf = gpd.read_file(os.path.join(folder_path, file))
         lsoa_list.append(gdf)
 
@@ -52,63 +50,91 @@ def get_lsoa_geodata(lsoa_folder: str = "datasets/lsoa_boundaries/") -> gpd.GeoD
     return lsoa_all
 
 
-# To see intermediate plots, uncomment the respective lines
-lsoa_data = get_lsoa_geodata()
-
-# lsoa_data.plot()
-# plt.show()
-
-london_roads = london_roads.to_crs(lsoa_data.crs)
-
-roads_with_lsoa = gpd.sjoin(london_roads, lsoa_data, how="left", predicate="intersects")
-
-# roads_with_lsoa.plot(markersize=5, color='red')
-# plt.show()
-
-# # Plot the new map
-# fig, ax = plt.subplots(figsize=(12, 12))
-
-# # Plot road links on top
-# london_roads.plot(ax=ax, color='red', linewidth=0.5)
-
-# # Plot LSOA polygons (background)
-# lsoa_data.plot(ax=ax, facecolor='none', edgecolor='grey', linewidth=0.5)
-
-# # Optional title and display
-# ax.set_title("London Roads Overlaid on LSOA Boundaries", fontsize=15)
-# plt.show()
-
-print(roads_with_lsoa.columns)
-print(roads_with_lsoa[['id', 'lsoa21cd', 'lsoa21nm']].head())
-
-roads_with_lsoa = roads_with_lsoa.rename(columns={"lsoa21cd": "LSOA code"})
-
-road_counts = roads_with_lsoa.groupby('LSOA code').size().reset_index(name='road_count')
-print(road_counts.head())
-
-grouped_roads = roads_with_lsoa.dissolve(by='LSOA code', as_index=False)
-
-lsoa_data = pd.read_excel("single_sheet_merged.xlsx")
-grouped_roads = grouped_roads.merge(lsoa_data, on='LSOA code', how='left')
-
-print(grouped_roads.head())
-
 def map_burglaries_to_roads():
-    # Plot
-    fig, ax = plt.subplots(figsize=(12, 12))
+        # Plot
+        fig, ax = plt.subplots(figsize=(12, 12))
 
-    # Use burglary count to color the roads
-    grouped_roads.plot(
-        ax=ax,
-        column='Crime Score',   # Color by this column
-        cmap='Reds',               # Choose a colormap (e.g., 'Reds', 'OrRd', 'viridis')
-        linewidth=1,
-        legend=True,
-        legend_kwds={'label': "Crime score by LSOA"}
+        # Use burglary count to color the roads
+        grouped_roads.plot(
+            ax=ax,
+            column='Crime Score',   # Color by this column
+            cmap='Reds',               # Choose a colormap (e.g., 'Reds', 'OrRd', 'viridis')
+            linewidth=1,
+            legend=True,
+            legend_kwds={'label': "Crime score by LSOA"}
+        )
+
+        ax.set_title("London Roads Colored by Crime Score", fontsize=15)
+        ax.axis('off')
+        plt.show()
+
+
+def add_wards_to_data(data_df_path: str, lsoa_to_ward_path: str, new_file_name: str = 'single__sheet_merged_including_wards.xlsx') -> None:
+     # Get the data
+    df_main = pd.read_excel(data_df_path)
+    df_lookup = pd.read_csv(lsoa_to_ward_path)
+
+    # Merge the data on LSOA's
+    df_merged: pd.DataFrame = df_main.merge(
+    df_lookup[['LSOA21CD', 'WD24CD', 'WD24NM']],
+    left_on='LSOA code',
+    right_on='LSOA21CD',
+    how='left'
     )
 
-    ax.set_title("London Roads Colored by Crime Score", fontsize=15)
-    ax.axis('off')
-    plt.show()
+    # Get rid of the double LSOA column since it is no longer needed
+    df_merged = df_merged.drop(columns=['LSOA21CD'])
+    
+    print(df_merged[['LSOA code', 'WD24NM']].head())
+    print(df_merged.head())
 
-map_burglaries_to_roads()
+    df_merged.to_excel(new_file_name, index='false')
+    print('Created new data file named: ', new_file_name)
+    
+
+
+if __name__ == "__main__":
+    # To see intermediate plots, uncomment the respective lines
+    lsoa_data = get_lsoa_geodata()
+
+    london_roads = gpd.read_file('datasets/london_road_links_only.gpkg')
+
+    london_roads = london_roads.to_crs(lsoa_data.crs)
+
+    roads_with_lsoa = gpd.sjoin(london_roads, lsoa_data, how="left", predicate="intersects")
+
+    # roads_with_lsoa.plot(markersize=5, color='red')
+    # plt.show()
+
+    # # Plot the new map
+    # fig, ax = plt.subplots(figsize=(12, 12))
+
+    # # Plot road links on top
+    # london_roads.plot(ax=ax, color='red', linewidth=0.5)
+
+    # # Plot LSOA polygons (background)
+    # lsoa_data.plot(ax=ax, facecolor='none', edgecolor='grey', linewidth=0.5)
+
+    # # Optional title and display
+    # ax.set_title("London Roads Overlaid on LSOA Boundaries", fontsize=15)
+    # plt.show()
+
+    print(roads_with_lsoa.columns)
+    print(roads_with_lsoa[['id', 'lsoa21cd', 'lsoa21nm']].head())
+
+    roads_with_lsoa = roads_with_lsoa.rename(columns={"lsoa21cd": "LSOA code"})
+
+    road_counts = roads_with_lsoa.groupby('LSOA code').size().reset_index(name='road_count')
+    print(road_counts.head())
+
+    grouped_roads = roads_with_lsoa.dissolve(by='LSOA code', as_index=False)
+
+    lsoa_data = pd.read_excel("single_sheet_merged.xlsx")
+    grouped_roads = grouped_roads.merge(lsoa_data, on='LSOA code', how='left')
+
+    print(grouped_roads.head())
+
+    map_burglaries_to_roads()
+
+    # Used for adding ward classifications to the LSOA's, creating the new data file: single__sheet_merged_including_wards.xlsx
+    # add_wards_to_data("single_sheet_merged.xlsx", "datasets/LSOA_(2021)_to_Electoral_Ward_(2024)_to_LAD_(2024).csv")
