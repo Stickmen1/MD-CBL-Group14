@@ -33,7 +33,7 @@ function Counters() {
           </Grid>
           <Grid item xs={12} md={4}>
             <DefaultCounterCard
-              count={12}
+              count={16}
               title="Hours"
               description="The most risk hours of the day are taken into account"
             />

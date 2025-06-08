@@ -32,6 +32,8 @@ import AboutUs from "layouts/pages/landing-pages/about-us";
 import ContactUs from "layouts/pages/landing-pages/contact-us";
 import Author from "layouts/pages/landing-pages/author";
 import SignIn from "layouts/pages/authentication/sign-in";
+import Terms from "layouts/pages/landing-pages/terms";
+import Policy from "layouts/pages/landing-pages/policy";
 
 // Sections
 /*
@@ -294,6 +296,22 @@ const routes = [
     route: "/tool",
     component: Author,
     requiresAuth: true,
+  },
+  {
+    name: "Terms & Conditions",
+    icon: <Icon>gavel</Icon>,
+    route: "/pages/landing-pages/terms",
+    component: Terms,
+    requiresAuth: false,
+    hidden: true,
+  },
+    {
+    name: "Privacy Policy",
+    icon: <Icon>gavel</Icon>,
+    route: "/pages/landing-pages/policy",
+    component: Policy,
+    requiresAuth: false,
+    hidden: true,
   },
 ];
 

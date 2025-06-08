@@ -23,26 +23,25 @@ export default {
     {
       name: "company",
       items: [
-        { name: "about us", href: "" },
+        { name: "about us", href: "/pages/landing-pages/about-us" },
       ],
     },
     {
-      name: "test",
+      name: "Tool Access",
       items: [
-        { name: "test", href: "" },]
+        { name: "sign in", href: "/pages/authentication/sign-in" },]
     },
     {
       name: "help & support",
       items: [
-        { name: "contact us", href: "" },
+        { name: "contact us", href: "/pages/landing-pages/contact-us" },
       ],
     },
     {
       name: "legal",
       items: [
-        { name: "terms & conditions", href: "" },
-        { name: "privacy policy", href: "" },
-        { name: "licenses (EULA)", href: "" },
+        { name: "terms & conditions", href: "/pages/landing-pages/terms" },
+        { name: "privacy policy", href: "/pages/landing-pages/policy" },
       ],
     },
   ],
