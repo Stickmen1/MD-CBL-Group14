@@ -47,10 +47,11 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
 
   const openMobileNavbar = () => setMobileNavbar(!mobileNavbar);
   const filteredRoutes = routes.filter(
-  (route) =>
-    (!route.requiresAuth || user) &&  // keep if not protected OR user is logged in
-    !(route.name === "Sign In" && user) // hide "Sign In" if user is logged in
-);
+    (route) =>
+      (!route.requiresAuth || user) &&          // keep if not protected OR user is logged in
+      !(route.name === "Sign In" && user) &&    // hide "Sign In" if user is logged in
+      !route.hidden                             // hide if route is explicitly hidden
+  );
 
   const handleLogout = async () => {
   try {
@@ -61,14 +62,6 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
     console.error("Logout failed:", error);
   }
 };
-
-  useEffect(() => {
-  if (user === null) {
-    console.log("User still loading or not signed in.");
-  } else {
-    console.log("User logged in:", user);
-  }
-}, [user]);
 
   useEffect(() => {
     // A function that sets the display state for the DefaultNavbarMobile.
@@ -584,7 +577,7 @@ function DefaultNavbar({ brand, routes, transparent, light, action, sticky, rela
           borderRadius="xl"
           px={transparent ? 2 : 0}
         >
-          {mobileView && <DefaultNavbarMobile routes={routes} open={mobileNavbar} />}
+          {mobileView && <DefaultNavbarMobile routes={filteredRoutes} open={mobileNavbar} />}
         </MKBox>
       </MKBox>
       {dropdownMenu}

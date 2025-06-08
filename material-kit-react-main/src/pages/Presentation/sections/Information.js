@@ -36,7 +36,7 @@ function Information() {
               />
               <RotatingCardBack
                 image={bgBack}
-                title="Contact Us"
+                title="Get Access"
                 description="If you want to access the tool, please contact us. We will review your request and get back to you as soon as possible."
                 action={{
                   type: "internal",

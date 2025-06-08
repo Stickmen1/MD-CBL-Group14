@@ -46,7 +46,7 @@ function Team() {
                 image={team5}
                 name="Renée van den Bergen"
                 position={{ color: "info", label: "Psychology and Technology" }}
-                description="Artist is a term applied to a person who engages in an activity deemed to be an art."
+                description="Expert in researching, gathering, analyzing, and synthesizing information."
               />
             </MKBox>
           </Grid>
@@ -56,7 +56,7 @@ function Team() {
                 image={team5}
                 name="Sven Collins"
                 position={{ color: "info", label: "Data Science" }}
-                description="Artist is a term applied to a person who engages in an activity deemed to be an art."
+                description="Specialist in data science model creation, possessing a deep understanding of statistical methodologies."
               />
             </MKBox>
           </Grid>
@@ -66,7 +66,7 @@ function Team() {
                 image={team5}
                 name="Bálint Kecskeméti"
                 position={{ color: "info", label: "Computer Science" }}
-                description="Artist is a term applied to a person who engages in an activity deemed to be an art."
+                description="Creation of graphs and producing files with practical value, possessing ability to analyze complex data sets."
               />
             </MKBox>
           </Grid>
@@ -76,7 +76,7 @@ function Team() {
                 image={team5}
                 name="Joris Lesterhuis"
                 position={{ color: "info", label: "Data Science" }}
-                description="Artist is a term applied to a person who engages in an activity deemed to be an art."
+                description="Extensive expertise in developing data science models, having comprehensive grasp of statistical methods."
               />
             </MKBox>
           </Grid>
@@ -86,7 +86,7 @@ function Team() {
                 image={team5}
                 name="Momchil Milushev"
                 position={{ color: "info", label: "Computer Science" }}
-                description="Artist is a term applied to a person who engages in an activity deemed to be an art."
+                description="Extensive experience in designing appealing web interfaces and ensuring integration of the tool."
               />
             </MKBox>
           </Grid>
@@ -96,7 +96,7 @@ function Team() {
                 image={team5}
                 name="Aleksandra Nowińska"
                 position={{ color: "info", label: "Data Science" }}
-                description="Artist is a term applied to a person who engages in an activity deemed to be an art."
+                description="Designing and deploying robust predictive models that drive insights and support strategic decision-making."
               />
             </MKBox>
           </Grid>

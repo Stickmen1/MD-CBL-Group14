@@ -16,9 +16,27 @@ import MKTypography from "components/MKTypography";
 
 // Material Kit 2 React example components
 import DefaultNavbarDropdown from "examples/Navbars/DefaultNavbar/DefaultNavbarDropdown";
+import { useAuth } from "../../../AuthContext";
+import { signOut } from "firebase/auth";
+import { auth } from "firebase.js";
+import { useNavigate } from "react-router-dom";
+import Icon from "@mui/material/Icon";
 
 function DefaultNavbarMobile({ routes, open }) {
   const [collapse, setCollapse] = useState("");
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      // Redirect to login page (optional)
+      navigate("/presentation");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   const handleSetCollapse = (name) => (collapse === name ? setCollapse(false) : setCollapse(name));
 
@@ -137,6 +155,35 @@ function DefaultNavbarMobile({ routes, open }) {
     <Collapse in={Boolean(open)} timeout="auto" unmountOnExit>
       <MKBox width="calc(100% + 1.625rem)" my={2} ml={-2}>
         {renderNavbarItems}
+        {user && (
+            <MKBox
+              mx={1}
+              p={1}
+              display="flex"
+              alignItems="center" // key: center aligns icon and text
+              //color={light ? "white" : "dark"}
+              opacity={0.6}
+              sx={{ cursor: "pointer", userSelect: "none" }}
+              onClick={handleLogout}
+            >
+              <MKTypography
+                variant="body2"
+                color="inherit"
+                sx={{ display: "flex", alignItems: "center" }} // icon inside flex
+              >
+                <Icon sx={{ verticalAlign: "middle", mr: 1 }}>logout</Icon>
+                <MKTypography
+                  variant="button"
+                  fontWeight="regular"
+                  textTransform="capitalize"
+                  //color={light ? "white" : "dark"}
+                  sx={{ fontWeight: "100%" }}
+                >
+                  Logout
+                </MKTypography>
+              </MKTypography>
+            </MKBox>
+          )}
       </MKBox>
     </Collapse>
   );

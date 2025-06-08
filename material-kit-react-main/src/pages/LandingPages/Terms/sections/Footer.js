@@ -1,8 +1,8 @@
 // @mui material components
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-//import Link from "@mui/material/Link";
-//import Stack from "@mui/material/Stack";
+import Link from "@mui/material/Link";
+import Stack from "@mui/material/Stack";
 
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
@@ -22,8 +22,8 @@ function Footer() {
             mb={{ xs: 3, lg: 0 }}
           >
             <MKTypography variant="h6" textTransform="uppercase" mb={{ xs: 2, lg: 3 }}>
+              Material Design
             </MKTypography>
-            {/*}
             <Stack
               component="ul"
               direction="row"
@@ -83,7 +83,6 @@ function Footer() {
                 </MKTypography>
               </MKBox>
             </Stack>
-            */}
             <MKTypography variant="button" opacity={0.8}>
               Copyright © <script>document.write(new Date().getFullYear())</script>2025 StreetGuard
             </MKTypography>
@@ -92,7 +91,6 @@ function Footer() {
             <MKTypography variant="body1" fontWeight="bold" mb={6} sx={{ fontSize: "1.125rem" }}>
               
             </MKTypography>
-            {/*}
             <MKTypography
               component={Link}
               href="#dribbble"
@@ -140,7 +138,6 @@ function Footer() {
             >
               <i className="fab fa-github" />
             </MKTypography>
-            */}
           </Grid>
         </Grid>
       </Container>
