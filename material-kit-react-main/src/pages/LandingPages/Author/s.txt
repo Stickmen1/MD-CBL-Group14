@@ -1,0 +1,58 @@
+            {/*}
+            <TableContainer
+              component={Paper}
+              style={{
+                borderRadius: "12px",
+                maxHeight: "200px", // Vertically shows max 3 rows
+                overflowY: "auto",
+                width: "50%",       // Make table container 50% wide
+              }}
+            >
+              <Table
+                style={{
+                  tableLayout: "fixed",
+                  width: "100%",
+                  borderCollapse: "collapse", // Ensure borders merge cleanly
+                }}
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell
+                      style={{
+                        
+                        borderRight: "1px solid #ccc",
+                      }}
+                    >
+                      <strong>Event Name</strong>
+                    </TableCell>
+                    <TableCell
+                      style={{
+                        
+                        borderRight: "1px solid #ccc",
+                      }}
+                    >
+                      <strong># of People</strong>
+                    </TableCell>
+                    <TableCell style={{  }}>
+                      <strong>Description</strong>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {events.map((event, index) => (
+                    <TableRow key={index}>
+                      <TableCell style={{ width: "33.33%", borderRight: "1px solid #eee" }}>
+                        {event.eventName}
+                      </TableCell>
+                      <TableCell style={{ width: "33.33%", borderRight: "1px solid #eee" }}>
+                        {event.numberOfPeople}
+                      </TableCell>
+                      <TableCell style={{ width: "33.33%" }}>
+                        {event.description}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            */}
