@@ -1,6 +1,8 @@
 // @mui material components
 import Grid from "@mui/material/Grid";
 import React, { useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
+import { useRef } from "react";
 
 // Material Kit 2 React components
 import MKBox from "components/MKBox";
@@ -15,6 +17,7 @@ import DefaultFooter from "examples/Footers/DefaultFooter";
 // Routes
 import routes from "routes";
 import footerRoutes from "footer.routes";
+import { addEvent } from "eventsStore"; // Adjust path if needed
 
 // Image
 import bgImage from "assets/images/illustrations/illustration-reset.jpg";
@@ -26,6 +29,55 @@ function ContactUs() {
     message: "",
   });
 
+  const [eventData, setEventData] = useState({
+    eventName: "",
+    numberOfPeople: "",
+    description: "",
+  });
+  //const [submittedEvents, setSubmittedEvents] = useState([]);
+  const recaptchaRef = useRef(null);
+  const [captchaValue, setCaptchaValue] = useState(null);
+
+  const handleEventChange1 = (e) => {
+  const { name, value } = e.target;
+    setEventData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  {/*}
+  const handleEventSubmit1 = async (e) => {
+    e.preventDefault();
+    try {
+      await addEvent(eventData); // ✅ Save to Firestore
+      console.log("Event submitted:", eventData);
+      setEventData({ eventName: "", numberOfPeople: "", description: "" });
+    } catch (error) {
+      console.error("Failed to submit event:", error);
+    }
+  };
+  */}
+  const handleEventSubmit1 = async (e) => {
+    e.preventDefault();
+
+    if (!captchaValue) {
+      alert("Please verify that you are not a robot.");
+      return;
+    }
+
+    try {
+      // Optionally, you can verify captchaValue on your backend here before calling addEvent
+
+      await addEvent(eventData);
+      //console.log("Event submitted:", eventData);
+      setEventData({ eventName: "", numberOfPeople: "", description: "" });
+      setCaptchaValue(null);
+      recaptchaRef.current.reset();
+    } catch (error) {
+      console.error("Failed to submit event:", error);
+    }
+  };
   const [messages, setMessages] = useState([]);
 
   const handleChange = (e) => {
@@ -43,8 +95,8 @@ function ContactUs() {
     setMessages((prevMessages) => [...prevMessages, formData]);
 
     // Optional: Console log for debugging
-    console.log("All Messages:", [...messages, formData]);
-
+    //console.log("All Messages:", [...messages, formData]);
+    messages.sort()
     // Reset form
     setFormData({
       name: "",
@@ -150,6 +202,74 @@ function ContactUs() {
                 <Grid container item justifyContent="center" xs={12} mt={5} mb={2}>
                   <MKButton type="submit" variant="gradient" color="info">
                     Send Message
+                  </MKButton>
+                </Grid>
+              </MKBox>
+            </MKBox>
+            <MKBox
+                variant="gradient"
+                bgColor="info"
+                coloredShadow="info"
+                borderRadius="lg"
+                p={2}
+                mx={2}
+                mt={-3}
+              >
+                <MKTypography variant="h3" color="white">
+                  Event Report
+                </MKTypography>
+              </MKBox>
+            <MKBox mt={5} p={3}>
+              <MKBox component="form" onSubmit={handleEventSubmit1} mt={2}>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={6}>
+                    <MKInput
+                      name="eventName"
+                      value={eventData.eventName}
+                      onChange={handleEventChange1}
+                      variant="standard"
+                      label="Name of Event"
+                      InputLabelProps={{ shrink: true }}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <MKInput
+                      name="numberOfPeople"
+                      type="number"
+                      value={eventData.numberOfPeople}
+                      onChange={handleEventChange1}
+                      variant="standard"
+                      label="Number of People"
+                      InputLabelProps={{ shrink: true }}
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <MKInput
+                      name="description"
+                      value={eventData.description}
+                      onChange={handleEventChange1}
+                      variant="standard"
+                      label="Brief Description"
+                      placeholder="Describe the event..."
+                      InputLabelProps={{ shrink: true }}
+                      multiline
+                      rows={4}
+                      fullWidth
+                    />
+                  </Grid>
+                </Grid>
+                <Grid container justifyContent="center" mt={3} mb={2}>
+                  <ReCAPTCHA
+                    sitekey="6LedGl4rAAAAAFD41YRu6DwPFtSxJu4z3fp5HPbs"
+                    onChange={(value) => setCaptchaValue(value)}
+                    ref={recaptchaRef}
+                  />
+                </Grid>
+                <Grid container item justifyContent="center" xs={12} mt={4}>
+                  <MKButton type="submit" variant="gradient" color="info">
+                    Send Event Info
                   </MKButton>
                 </Grid>
               </MKBox>

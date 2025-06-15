@@ -25,7 +25,8 @@ function Counters() {
           <Grid item xs={12} md={4} display="flex">
             <Divider orientation="vertical" sx={{ display: { xs: "none", md: "block" }, mx: 0 }} />
             <DefaultCounterCard
-              count={2500}
+              count={60000}
+              suffix="+"
               title="Policemen"
               description="Police officers are deployed using our tool to prevent burglaries"
             />
