@@ -189,7 +189,7 @@ function Author() {
   const requestPatrolData = async (month, ward) => {
     setLoading(true);
     try {
-      const res = await fetch("http://142.93.130.113:8000/api/patrol", {
+      const res = await fetch("https://api.streetguard.info/api/patrol", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ month, ward }),
