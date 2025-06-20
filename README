@@ -1,2 +1,28 @@
-Data is from the city of london police and London metropolitan police department and includes
-crime, outcomes and stop and search data.
+# 🔐 StreetGuard: Burglary Prediction & Patrol Route Optimization in London
+
+Welcome to **StreetGuard**, an toolkit for forecasting burglary hotspots and generating optimal police patrol routes in London. This repository includes:
+
+- A **web-based scheduling tool** for burglary prediction and visualization
+- Scripts for **data preprocessing** and **crime analytics**
+- **Routing algorithms** for strategic patrol deployment
+- Datasets containing real-world **crime data** (burglaries in London)
+- **Time-slot** allocation for police officers
+- **Special operations** events for bigger police involvement
+
+---
+
+## 🚀 Features
+
+- 📅 **Interactive Web Scheduler**: Visualize patrol routes and time-slot allocations.
+- 📊 **Crime Prediction Engine**: Uses historical data to forecast high-risk areas.
+- 🧠 **Route Optimization Algorithms**: Efficient patrol paths using heuristics and optimization techniques.
+- 📁 **Preprocessed Datasets**: Real London crime datasets, cleaned and structured.
+- 🛠️ **Modular Python Scripts**: For EDA, modeling, and evaluation.
+
+---
+
+## 🌍 Live Demo
+
+👉 [**View the Website**](#) – https://streetguard.info/presentation
+
+---
